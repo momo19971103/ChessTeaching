@@ -5,24 +5,23 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    ConstraintLayout constraintLayout;
+    RelativeLayout constraintLayout;
     ImageView[] chessImg1 = new ImageView[32];
     ImageView checkerBoardImg;
     TextView textView;
     int[] chessposition;
-    int index = 1;
+    int chessPictureNum = 0;
     final int[] checkerboard = {
             R.drawable.checkerboardchinas, R.drawable.checkerboardforeign, R.drawable.checkerboardjapans};
     final int[] chess = {
@@ -47,8 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
         checkerBoardImg = findViewById(R.id.imagecheckerboard);
         checkerBoardImg.setScaleType(ImageView.ScaleType.CENTER);
-        checkerBoardImg.setImageResource(checkerboard[0]);
-
         ReducePicture reducePicture = new ReducePicture(this, screenWidth, checkerboard[0]);
 
         checkerBoardImg.setImageBitmap(reducePicture.ReturnStandardBitmap());
@@ -79,11 +76,16 @@ public class MainActivity extends AppCompatActivity {
     void BuildChessTime(int NumberOfExecutions, int chessNum, ReducePicture reducePicture) {
         //https://lynn5133.pixnet.net/blog/post/460064050-%3C%3Candroid-app%3E%3E%E5%8B%95%E6%85%8B%E6%96%B0%E5%A2%9Eimageview
         for (int i = NumberOfExecutions; i > 0; i--) {
-            chessImg1[index - 1] = new ImageView(getApplicationContext());
-            chessImg1[index - 1].setImageResource(chess[chessNum]);
-            chessImg1[index - 1].setImageBitmap(reducePicture.ReturnObeyBitmap(this, chess[chessNum]));
-            chessImg1[index - 1].setOnTouchListener(imgListener);
-            constraintLayout.addView(chessImg1[index - 1], index++);
+            chessImg1[chessPictureNum] = new ImageView(getApplicationContext());
+            Bitmap ConversionChessBitmap= reducePicture.ReturnObeyBitmap(this, chess[chessNum]);
+            chessImg1[chessPictureNum].setImageBitmap(ConversionChessBitmap);
+            int chessWidth = ConversionChessBitmap.getWidth();
+            int chessHeight = ConversionChessBitmap.getHeight();
+            RelativeLayout.LayoutParams layoutParams =
+                    new RelativeLayout.LayoutParams(chessWidth, chessHeight);
+            chessImg1[chessPictureNum].setOnTouchListener(imgListener);
+            constraintLayout.addView(chessImg1[chessPictureNum], layoutParams);
+            chessPictureNum++;
         }
     }
 
@@ -105,16 +107,20 @@ public class MainActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_MOVE:// 移動圖片時
                     //getX()：是獲取當前控件(View)的座標
                     //getRawX()：是獲取相對顯示螢幕左上角的座標
-                    mx = (int) (event.getRawX() - x);
-                    float test = event.getRawX();
+                    /*mx = (int) (event.getRawX() - x);
                     my = (int) (event.getRawY() - y - 3.5 * v.getHeight());//乘3不知道為什麼
-                    v.layout(mx, my, mx + v.getWidth(), my + v.getHeight());
+                    //v.layout(mx, my, mx + v.getWidth(), my + v.getHeight());
 
-                    ConstraintLayout.LayoutParams layoutParams
-                            = (ConstraintLayout.LayoutParams) v.getLayoutParams();
-                    layoutParams.leftMargin = (int) event.getRawX();
-                    layoutParams.topMargin = (int) event.getRawY();
-                    //v.setLayoutParams(layoutParams);
+                    RelativeLayout.LayoutParams layoutParams
+                            = (RelativeLayout.LayoutParams) v.getLayoutParams();
+                    layoutParams.setMargins(mx, my, mx + v.getWidth(), my + v.getHeight());
+                    v.setLayoutParams(layoutParams);
+                     */
+                    RelativeLayout.LayoutParams layoutParams
+                            = (RelativeLayout.LayoutParams) v.getLayoutParams();
+                    layoutParams.leftMargin = (int) event.getRawX()- (int) v.getWidth();
+                    layoutParams.topMargin = (int) event.getRawY()- (int)4.75 * v.getHeight();
+                    v.setLayoutParams(layoutParams);
 
                     break;
             }
@@ -128,19 +134,23 @@ public class MainActivity extends AppCompatActivity {
     };
 
     void sava() {
-        int Left = chessImg1[31].getLeft();
-        int Top = chessImg1[31].getTop();
-        int Right = chessImg1[31].getRight();
-        int Bottom = chessImg1[31].getBottom();
+        RelativeLayout.LayoutParams layoutParams
+                = (RelativeLayout.LayoutParams) chessImg1[31].getLayoutParams();
+
+        int Left = layoutParams.leftMargin;
+        int Top = layoutParams.topMargin;
+        int Right = layoutParams.rightMargin;
+        int Bottom = layoutParams.bottomMargin;
         chessposition = new int[]{Left, Top, Right, Bottom};
     }
 
     private View.OnClickListener butOnClickListener1 = new View.OnClickListener() {
         public void onClick(View v) {
             textView.setText("" + chessposition[0] + chessposition[1] + chessposition[2] + chessposition[3]);
-            //chessImg1[31].layout(chessposition[0], chessposition[1], checkerboard[2], chessposition[3]);//Loooper 212 214dosomthing();
-            ConstraintLayout.LayoutParams layoutParams
-                    = (ConstraintLayout.LayoutParams) chessImg1[31].getLayoutParams();
+            chessImg1[31].layout(chessposition[0], chessposition[1], checkerboard[2], chessposition[3]);//Loooper 212 214dosomthing();
+            RelativeLayout.LayoutParams layoutParams
+                    = (RelativeLayout.LayoutParams) chessImg1[31].getLayoutParams();
+            layoutParams.setMargins(chessposition[0], chessposition[1], checkerboard[2], chessposition[3]);
             chessImg1[31].setLayoutParams(layoutParams);
 
         }
