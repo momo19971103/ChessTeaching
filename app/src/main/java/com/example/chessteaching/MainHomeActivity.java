@@ -18,6 +18,8 @@ public class MainHomeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainHomeActivity.this, MainActivity.class);
                 startActivity(intent);
+                MainHomeActivity.this.setResult(RESULT_OK, intent);
+                MainHomeActivity.this.finish();
             }
         });
     }

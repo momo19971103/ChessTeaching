@@ -2,6 +2,7 @@ package com.example.chessteaching;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ public class ProgressDialogUtil {
 
     /**
      * 彈出耗時對話方塊
+     *
      * @param context
      */
     public static void showProgressDialog(Context context) {
@@ -45,8 +47,12 @@ public class ProgressDialogUtil {
 
         TextView tvTip = loadView.findViewById(R.id.tvTip);
         tvTip.setText(tip);
+        try {
+            mAlertDialog.show();
+        } catch (Exception e) {
+            Log.e("ERROR", "" + e);
+        }
 
-        mAlertDialog.show();
     }
 
     /**
@@ -55,6 +61,7 @@ public class ProgressDialogUtil {
     public static void dismiss() {
         if (mAlertDialog != null && mAlertDialog.isShowing()) {
             mAlertDialog.dismiss();
+            mAlertDialog=null;
         }
     }
 }

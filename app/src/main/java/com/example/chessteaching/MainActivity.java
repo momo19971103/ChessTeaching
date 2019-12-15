@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     RelativeLayout relativeLayout;
     ConstraintLayout constraintLayout;
     ReducePicture reducePicture;
+    ProgressDialogUtil progressDialogUtil;
     ImageView[] chessImg1 = new ImageView[32];
     ImageView checkerBoardImg;
     int WorkAreaWidth, WorkAreaHeight;
@@ -71,8 +73,12 @@ public class MainActivity extends AppCompatActivity {
         //https://stackoverflow.com/questions/20547974/how-to-get-programmatically-width-and-height-of-relative-linear-layout-in-andr
         super.onWindowFocusChanged(hasFocus);
         if (firstTime) {
-            new GetImage().execute();
-            firstTime = false;
+            try {
+                new GetImage().execute();
+                firstTime = false;
+            }catch (Exception  e){
+                Log.e("ERROR",""+e);
+            }
         }
     }
     @Override
@@ -87,9 +93,11 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.quit) {
             Intent intent = new Intent(MainActivity.this, MainHomeActivity.class);
             startActivity(intent);
+            MainActivity.this.setResult(RESULT_OK, intent);
+            MainActivity.this.finish();
         }
         if (id == R.id.save) {
-            Toast toast = Toast.makeText(this, "不好意思~還無此功能!敬請期待σ`∀´)σ", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(this, "不好意思~還無此功能!敬請期待σˋ∀ˊ)σ", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER,0,0);
             toast.show();
         }
@@ -136,14 +144,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class GetImage extends AsyncTask<Void, Integer, Void> {
-        ProgressDialogUtil progressDialogUtil;
+
 
         @Override
         protected void onPreExecute() {
             //執行前 設定可以在這邊設定
             super.onPreExecute();
-            progressDialogUtil = new ProgressDialogUtil();
-            progressDialogUtil.showProgressDialog(MainActivity.this, "整軍備戰...");
+
+            try {
+                if (!MainActivity.this.isFinishing())//xActivity即为本界面的Activity
+                {
+                    progressDialogUtil = new ProgressDialogUtil();
+                    progressDialogUtil.showProgressDialog(MainActivity.this, "整軍備戰...");
+                }
+            }
+            catch (WindowManager.BadTokenException e) {
+                Log.e("ERROR", "" + e);
+                //use a log message
+            }
         }
 
         @Override
