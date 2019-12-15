@@ -182,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(v);
             BuidChess(reducePicture);
             progressDialogUtil.dismiss();
+            progressDialogUtil.resectAlertDialog();
 
         }
     }

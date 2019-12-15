@@ -61,8 +61,10 @@ public class ProgressDialogUtil {
     public static void dismiss() {
         if (mAlertDialog != null && mAlertDialog.isShowing()) {
             mAlertDialog.dismiss();
-            mAlertDialog=null;
         }
+    }
+    public void resectAlertDialog(){
+        mAlertDialog= null;
     }
 }
 
