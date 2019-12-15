@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     int WorkAreaWidth, WorkAreaHeight;
     int[] chessposition;
     int chessPictureNum = 0;
-    boolean firstTime = true;
+    //boolean firstTime = true;
     final int[] checkerboard = {
             R.drawable.checkerboardchinas, R.drawable.checkerboardforeign, R.drawable.checkerboardjapans};
     final int[] chess = {
@@ -52,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Intent intent = getIntent();
+        WorkAreaWidth = intent.getIntExtra("Width", 0);
+        WorkAreaHeight = intent.getIntExtra("Height", 0);
+
         DisplayMetrics dm = new DisplayMetrics();//取得視窗屬性
         getWindowManager().getDefaultDisplay().getMetrics(dm);
 
@@ -65,28 +69,39 @@ public class MainActivity extends AppCompatActivity {
         reducePicture = new ReducePicture(this, screenWidth, checkerboard[0]);
         checkerBoardImg.setImageBitmap(reducePicture.ReturnStandardBitmap());
 
+        try {
+            new GetImage().execute();
+
+        } catch (Exception e) {
+            Log.e("ERROR", "" + e);
+        }
+
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        // TODO Auto-generated method stub/
-        //https://stackoverflow.com/questions/20547974/how-to-get-programmatically-width-and-height-of-relative-linear-layout-in-andr
-        super.onWindowFocusChanged(hasFocus);
-        if (firstTime) {
-            try {
-                new GetImage().execute();
-                firstTime = false;
-            }catch (Exception  e){
-                Log.e("ERROR",""+e);
+    /*
+        @Override
+        public void onWindowFocusChanged(boolean hasFocus) {
+            // TODO Auto-generated method stub/
+            //https://stackoverflow.com/questions/20547974/how-to-get-programmatically-width-and-height-of-relative-linear-layout-in-andr
+            super.onWindowFocusChanged(hasFocus);
+            if (firstTime) {
+                try {
+                    new GetImage().execute();
+                    firstTime = false;
+                }catch (Exception  e){
+                    Log.e("ERROR",""+e);
+                }
             }
         }
-    }
+
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options_menu, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -98,15 +113,15 @@ public class MainActivity extends AppCompatActivity {
         }
         if (id == R.id.save) {
             Toast toast = Toast.makeText(this, "不好意思~還無此功能!敬請期待σˋ∀ˊ)σ", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER,0,0);
+            toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
         }
         return true;
     }
 
     void BuidChess(ReducePicture reducePicture) {
-        WorkAreaWidth = relativeLayout.getWidth();
-        WorkAreaHeight = relativeLayout.getHeight();
+        //WorkAreaWidth = relativeLayout.getWidth();
+        //WorkAreaHeight = relativeLayout.getHeight();
         for (int chessNum = 0; chessNum < 14; chessNum++) {
             if (chessNum == 0 || chessNum == 7)
                 BuildChessTime(1, chessNum, reducePicture);//帥將
@@ -122,23 +137,23 @@ public class MainActivity extends AppCompatActivity {
         //https://lynn5133.pixnet.net/blog/post/460064050-%3C%3Candroid-app%3E%3E%E5%8B%95%E6%85%8B%E6%96%B0%E5%A2%9Eimageview
         for (int i = NumberOfExecutions; i > 0; i--) {
 
-                chessImg1[chessPictureNum] = new ImageView(getApplicationContext());
-                Bitmap ConversionChessBitmap = reducePicture.ReturnObeyBitmap(this, chess[chessNum]);
-                chessImg1[chessPictureNum].setImageBitmap(ConversionChessBitmap);
-                int chessWidth = ConversionChessBitmap.getWidth();
-                int chessHeight = ConversionChessBitmap.getHeight();
-                RelativeLayout.LayoutParams layoutParams =
-                        new RelativeLayout.LayoutParams(chessWidth, chessHeight);
-                double originPointX = WorkAreaWidth * 0.06;
-                double originPointY = ((WorkAreaHeight - WorkAreaWidth) * 0.5) + originPointX * 0.2;
-                double Unit = WorkAreaWidth * 0.1;
-                ChinasChessGameConfiguration CCGC
-                        = new ChinasChessGameConfiguration(originPointX, originPointY, Unit);
-                layoutParams.leftMargin = CCGC.getChessPositionWidth(chessPictureNum);
-                layoutParams.topMargin = CCGC.getChessPositionHeight(chessPictureNum);
-                chessImg1[chessPictureNum].setOnTouchListener(imgListener);
-                relativeLayout.addView(chessImg1[chessPictureNum], layoutParams);
-                chessPictureNum++;
+            chessImg1[chessPictureNum] = new ImageView(getApplicationContext());
+            Bitmap ConversionChessBitmap = reducePicture.ReturnObeyBitmap(this, chess[chessNum]);
+            chessImg1[chessPictureNum].setImageBitmap(ConversionChessBitmap);
+            int chessWidth = ConversionChessBitmap.getWidth();
+            int chessHeight = ConversionChessBitmap.getHeight();
+            RelativeLayout.LayoutParams layoutParams =
+                    new RelativeLayout.LayoutParams(chessWidth, chessHeight);
+            double originPointX = WorkAreaWidth * 0.06;
+            double originPointY = ((WorkAreaHeight - WorkAreaWidth) * 0.5) + originPointX * 0.2;
+            double Unit = WorkAreaWidth * 0.1;
+            ChinasChessGameConfiguration CCGC
+                    = new ChinasChessGameConfiguration(originPointX, originPointY, Unit);
+            layoutParams.leftMargin = CCGC.getChessPositionWidth(chessPictureNum);
+            layoutParams.topMargin = CCGC.getChessPositionHeight(chessPictureNum);
+            chessImg1[chessPictureNum].setOnTouchListener(imgListener);
+            relativeLayout.addView(chessImg1[chessPictureNum], layoutParams);
+            chessPictureNum++;
 
         }
     }
@@ -157,8 +172,7 @@ public class MainActivity extends AppCompatActivity {
                     progressDialogUtil = new ProgressDialogUtil();
                     progressDialogUtil.showProgressDialog(MainActivity.this, "整軍備戰...");
                 }
-            }
-            catch (WindowManager.BadTokenException e) {
+            } catch (WindowManager.BadTokenException e) {
                 Log.e("ERROR", "" + e);
                 //use a log message
             }
