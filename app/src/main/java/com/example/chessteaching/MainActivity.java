@@ -34,8 +34,9 @@ public class MainActivity extends AppCompatActivity {
     ProgressDialogUtil progressDialogUtil;
     ImageView[] chessImg1 = new ImageView[32];
     ImageView checkerBoardImg;
+    final static int TraditionMode=1;
     int WorkAreaWidth, WorkAreaHeight;
-    int[] chessposition;
+    int Mode=0;
     int chessPictureNum = 0;
     //boolean firstTime = true;
     final int[] checkerboard = {
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         WorkAreaWidth = intent.getIntExtra("Width", 0);
         WorkAreaHeight = intent.getIntExtra("Height", 0);
+        Mode = intent.getIntExtra("Mode",0);
 
         DisplayMetrics dm = new DisplayMetrics();//取得視窗屬性
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
     void BuidChess(ReducePicture reducePicture) {
         //WorkAreaWidth = relativeLayout.getWidth();
         //WorkAreaHeight = relativeLayout.getHeight();
+        if(Mode==TraditionMode){
         for (int chessNum = 0; chessNum < 14; chessNum++) {
             if (chessNum == 0 || chessNum == 7)
                 BuildChessTime(1, chessNum, reducePicture);//帥將
@@ -129,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 BuildChessTime(5, chessNum, reducePicture);//兵卒
             else
                 BuildChessTime(2, chessNum, reducePicture);//其餘棋子
-        }
+        }}
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -159,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class GetImage extends AsyncTask<Void, Integer, Void> {
-
 
         @Override
         protected void onPreExecute() {

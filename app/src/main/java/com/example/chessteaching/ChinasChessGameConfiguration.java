@@ -2,7 +2,9 @@ package com.example.chessteaching;
 
 public class ChinasChessGameConfiguration {
     private int OriginX, OriginY, Unit;
-    private final int[][] chessposition = {{4, 9}, {3, 9}, {5, 9}, {2, 9}, {6, 9}, {0, 9}, {8, 9}, {1, 9},
+    private final int[][] formalChessPosition = {{4, 9}, {3, 9}, {5, 9}, {2, 9}, {6, 9}, {0, 9}, {8, 9}, {1, 9},
+            {7, 9}, {1, 7}, {7, 7}, {0, 6}, {2, 6}, {4, 6}, {6, 6}, {8, 6}};//棋盤座標(左上為原點)
+    private final int[][] leisureChessPosition = {{0, 0}, {3, 9}, {5, 9}, {2, 9}, {6, 9}, {0, 9}, {8, 9}, {1, 9},
             {7, 9}, {1, 7}, {7, 7}, {0, 6}, {2, 6}, {4, 6}, {6, 6}, {8, 6}};//棋盤座標(左上為原點)
 
 
@@ -18,7 +20,7 @@ public class ChinasChessGameConfiguration {
         if (NumberOfChess > 15) {
             NumberOfChess -= 16;
         }
-        position = chessposition[NumberOfChess][0];
+        position = formalChessPosition[NumberOfChess][0];
         Width = OriginX+Unit*position;
 
         return Width;
@@ -33,7 +35,7 @@ public class ChinasChessGameConfiguration {
             Reverse=-9;
             Unit= -Unit;
         }
-        position = chessposition[NumberOfChess][1];
+        position = formalChessPosition[NumberOfChess][1];
         Height = OriginY+Unit*(position+Reverse);
 
         return Height;

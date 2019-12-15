@@ -17,15 +17,38 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/homepicture" />
 
-    <Button
-        android:id="@+id/Traditionbtu"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="雙人中國象棋大盤"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.464"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/Traditionbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="雙人中國象棋大盤" />
+
+        <Button
+            android:id="@+id/Leisurebtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="雙人中國象棋小盤" />
+
+        <Button
+            android:id="@+id/reloadbtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="讀取紀錄" />
+
+        <Button
+            android:id="@+id/Messagebtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="關於我們" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
