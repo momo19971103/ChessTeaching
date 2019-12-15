@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -16,10 +17,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    RelativeLayout constraintLayout;
+    RelativeLayout relativeLayout;
+    ConstraintLayout constraintLayout;
+    ReducePicture reducePicture;
     ImageView[] chessImg1 = new ImageView[32];
     ImageView checkerBoardImg;
     TextView textView;
+    int WorkAreaWidth,WorkAreaHeight;
     int[] chessposition;
     int chessPictureNum = 0;
     final int[] checkerboard = {
@@ -28,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.b1, R.drawable.b2, R.drawable.b3, R.drawable.b4, R.drawable.b5, R.drawable.b6,
             R.drawable.b7, R.drawable.r1, R.drawable.r2, R.drawable.r3, R.drawable.r4, R.drawable.r5,
             R.drawable.r6, R.drawable.r7};
-    boolean firstTime = true;
+
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -39,20 +43,16 @@ public class MainActivity extends AppCompatActivity {
         DisplayMetrics dm = new DisplayMetrics();//取得視窗屬性
         getWindowManager().getDefaultDisplay().getMetrics(dm);
 
-        int screenWidth = dm.widthPixels; //視窗的寬度
-        int screenHeight = dm.heightPixels;//視窗高度
+        relativeLayout = findViewById(R.id.gameactivity);
+        constraintLayout = findViewById(R.id.ConstraintLayout);
 
-        constraintLayout = findViewById(R.id.gameactivity);
+        int screenWidth = dm.widthPixels; //視窗的寬度
 
         checkerBoardImg = findViewById(R.id.imagecheckerboard);
         checkerBoardImg.setScaleType(ImageView.ScaleType.CENTER);
-        ReducePicture reducePicture = new ReducePicture(this, screenWidth, checkerboard[0]);
-
+        reducePicture = new ReducePicture(this, screenWidth, checkerboard[0]);
         checkerBoardImg.setImageBitmap(reducePicture.ReturnStandardBitmap());
-        if (firstTime) {
-            BuidChess(reducePicture);//創建棋子
-            firstTime = false;
-        }
+
         final Button button = (Button) findViewById(R.id.button);
         button.setOnClickListener(butOnClickListener);
         final Button button1 = (Button) findViewById(R.id.button2);
@@ -60,8 +60,18 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.textView);
 
     }
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        // TODO Auto-generated method stub/
+        //https://stackoverflow.com/questions/20547974/how-to-get-programmatically-width-and-height-of-relative-linear-layout-in-andr
+        super.onWindowFocusChanged(hasFocus);
+        BuidChess(reducePicture);//在onWindowFocusChanged才可獲得view寬高
+    }
+
 
     void BuidChess(ReducePicture reducePicture) {
+        WorkAreaWidth = relativeLayout.getWidth();
+        WorkAreaHeight = relativeLayout.getHeight();
         for (int chessNum = 0; chessNum < 14; chessNum++) {
             if (chessNum == 0 || chessNum == 7)
                 BuildChessTime(1, chessNum, reducePicture);//帥將
@@ -77,14 +87,19 @@ public class MainActivity extends AppCompatActivity {
         //https://lynn5133.pixnet.net/blog/post/460064050-%3C%3Candroid-app%3E%3E%E5%8B%95%E6%85%8B%E6%96%B0%E5%A2%9Eimageview
         for (int i = NumberOfExecutions; i > 0; i--) {
             chessImg1[chessPictureNum] = new ImageView(getApplicationContext());
-            Bitmap ConversionChessBitmap= reducePicture.ReturnObeyBitmap(this, chess[chessNum]);
+            Bitmap ConversionChessBitmap = reducePicture.ReturnObeyBitmap(this, chess[chessNum]);
             chessImg1[chessPictureNum].setImageBitmap(ConversionChessBitmap);
             int chessWidth = ConversionChessBitmap.getWidth();
             int chessHeight = ConversionChessBitmap.getHeight();
             RelativeLayout.LayoutParams layoutParams =
                     new RelativeLayout.LayoutParams(chessWidth, chessHeight);
+            double originPointX =WorkAreaWidth * 0.05;
+
+            double originPointY =   ((WorkAreaHeight - WorkAreaWidth) * 0.5 );
+            layoutParams.leftMargin = (int) originPointX;
+            layoutParams.topMargin = (int) originPointY;
             chessImg1[chessPictureNum].setOnTouchListener(imgListener);
-            constraintLayout.addView(chessImg1[chessPictureNum], layoutParams);
+            relativeLayout.addView(chessImg1[chessPictureNum], layoutParams);
             chessPictureNum++;
         }
     }
@@ -107,21 +122,13 @@ public class MainActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_MOVE:// 移動圖片時
                     //getX()：是獲取當前控件(View)的座標
                     //getRawX()：是獲取相對顯示螢幕左上角的座標
-                    /*mx = (int) (event.getRawX() - x);
-                    my = (int) (event.getRawY() - y - 3.5 * v.getHeight());//乘3不知道為什麼
-                    //v.layout(mx, my, mx + v.getWidth(), my + v.getHeight());
-
                     RelativeLayout.LayoutParams layoutParams
                             = (RelativeLayout.LayoutParams) v.getLayoutParams();
-                    layoutParams.setMargins(mx, my, mx + v.getWidth(), my + v.getHeight());
+                    layoutParams.leftMargin = (int) event.getRawX() - (int) v.getWidth();
+                    layoutParams.topMargin = (int) event.getRawY() - (int) 5 * v.getHeight();
                     v.setLayoutParams(layoutParams);
-                     */
-                    RelativeLayout.LayoutParams layoutParams
-                            = (RelativeLayout.LayoutParams) v.getLayoutParams();
-                    layoutParams.leftMargin = (int) event.getRawX()- (int) v.getWidth();
-                    layoutParams.topMargin = (int) event.getRawY()- (int)4.75 * v.getHeight();
-                    v.setLayoutParams(layoutParams);
-
+                    String s = layoutParams.leftMargin + "---" + layoutParams.topMargin;
+                    Log.d("Tag", s);
                     break;
             }
             return true;
