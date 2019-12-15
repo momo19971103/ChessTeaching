@@ -6,6 +6,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.annotation.SuppressLint;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -15,6 +17,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
     RelativeLayout relativeLayout;
@@ -26,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     int WorkAreaWidth, WorkAreaHeight;
     int[] chessposition;
     int chessPictureNum = 0;
+    boolean firstTime = true;
     final int[] checkerboard = {
             R.drawable.checkerboardchinas, R.drawable.checkerboardforeign, R.drawable.checkerboardjapans};
     final int[] chess = {
@@ -60,7 +65,10 @@ public class MainActivity extends AppCompatActivity {
         // TODO Auto-generated method stub/
         //https://stackoverflow.com/questions/20547974/how-to-get-programmatically-width-and-height-of-relative-linear-layout-in-andr
         super.onWindowFocusChanged(hasFocus);
-        BuidChess(reducePicture);//在onWindowFocusChanged才可獲得view寬高
+        if (firstTime) {
+            new GetImage().execute();
+            firstTime = false;
+        }
     }
 
 
@@ -81,23 +89,58 @@ public class MainActivity extends AppCompatActivity {
     void BuildChessTime(int NumberOfExecutions, int chessNum, ReducePicture reducePicture) {
         //https://lynn5133.pixnet.net/blog/post/460064050-%3C%3Candroid-app%3E%3E%E5%8B%95%E6%85%8B%E6%96%B0%E5%A2%9Eimageview
         for (int i = NumberOfExecutions; i > 0; i--) {
-            chessImg1[chessPictureNum] = new ImageView(getApplicationContext());
-            Bitmap ConversionChessBitmap = reducePicture.ReturnObeyBitmap(this, chess[chessNum]);
-            chessImg1[chessPictureNum].setImageBitmap(ConversionChessBitmap);
-            int chessWidth = ConversionChessBitmap.getWidth();
-            int chessHeight = ConversionChessBitmap.getHeight();
-            RelativeLayout.LayoutParams layoutParams =
-                    new RelativeLayout.LayoutParams(chessWidth, chessHeight);
-            double originPointX = WorkAreaWidth * 0.06;
-            double originPointY = ((WorkAreaHeight - WorkAreaWidth) * 0.5)+originPointX*0.2;
-            double Unit = WorkAreaWidth * 0.1;
-            ChinasChessGameConfiguration CCGC
-                    = new ChinasChessGameConfiguration(originPointX,originPointY,Unit);
-            layoutParams.leftMargin = CCGC.getChessPositionWidth(chessPictureNum);
-            layoutParams.topMargin = CCGC.getChessPositionHeight(chessPictureNum);
-            chessImg1[chessPictureNum].setOnTouchListener(imgListener);
-            relativeLayout.addView(chessImg1[chessPictureNum], layoutParams);
-            chessPictureNum++;
+
+                chessImg1[chessPictureNum] = new ImageView(getApplicationContext());
+                Bitmap ConversionChessBitmap = reducePicture.ReturnObeyBitmap(this, chess[chessNum]);
+                chessImg1[chessPictureNum].setImageBitmap(ConversionChessBitmap);
+                int chessWidth = ConversionChessBitmap.getWidth();
+                int chessHeight = ConversionChessBitmap.getHeight();
+                RelativeLayout.LayoutParams layoutParams =
+                        new RelativeLayout.LayoutParams(chessWidth, chessHeight);
+                double originPointX = WorkAreaWidth * 0.06;
+                double originPointY = ((WorkAreaHeight - WorkAreaWidth) * 0.5) + originPointX * 0.2;
+                double Unit = WorkAreaWidth * 0.1;
+                ChinasChessGameConfiguration CCGC
+                        = new ChinasChessGameConfiguration(originPointX, originPointY, Unit);
+                layoutParams.leftMargin = CCGC.getChessPositionWidth(chessPictureNum);
+                layoutParams.topMargin = CCGC.getChessPositionHeight(chessPictureNum);
+                chessImg1[chessPictureNum].setOnTouchListener(imgListener);
+                relativeLayout.addView(chessImg1[chessPictureNum], layoutParams);
+                chessPictureNum++;
+
+        }
+    }
+
+    private class GetImage extends AsyncTask<Void, Integer, Void> {
+        ProgressDialogUtil progressDialogUtil;
+
+        @Override
+        protected void onPreExecute() {
+            //執行前 設定可以在這邊設定
+            super.onPreExecute();
+            progressDialogUtil = new ProgressDialogUtil();
+            progressDialogUtil.showProgressDialog(MainActivity.this, "整軍備戰...");
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            //執行中 在背景做事情
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            //執行中 可以在這邊告知使用者進度
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            //執行後 完成背景任務
+            super.onPostExecute(v);
+            BuidChess(reducePicture);
+            progressDialogUtil.dismiss();
+
         }
     }
 
