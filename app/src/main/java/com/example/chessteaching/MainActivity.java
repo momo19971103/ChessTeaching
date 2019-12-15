@@ -5,18 +5,24 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.net.URL;
 
@@ -26,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     ReducePicture reducePicture;
     ImageView[] chessImg1 = new ImageView[32];
     ImageView checkerBoardImg;
-    TextView textView;
     int WorkAreaWidth, WorkAreaHeight;
     int[] chessposition;
     int chessPictureNum = 0;
@@ -70,7 +75,26 @@ public class MainActivity extends AppCompatActivity {
             firstTime = false;
         }
     }
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.quit) {
+            Intent intent = new Intent(MainActivity.this, MainHomeActivity.class);
+            startActivity(intent);
+        }
+        if (id == R.id.save) {
+            Toast toast = Toast.makeText(this, "不好意思~還無此功能!敬請期待σ`∀´)σ", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER,0,0);
+            toast.show();
+        }
+        return true;
+    }
 
     void BuidChess(ReducePicture reducePicture) {
         WorkAreaWidth = relativeLayout.getWidth();
