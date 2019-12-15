@@ -53,12 +53,6 @@ public class MainActivity extends AppCompatActivity {
         reducePicture = new ReducePicture(this, screenWidth, checkerboard[0]);
         checkerBoardImg.setImageBitmap(reducePicture.ReturnStandardBitmap());
 
-        final Button button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(butOnClickListener);
-        final Button button1 = (Button) findViewById(R.id.button2);
-        button1.setOnClickListener(butOnClickListener1);
-        textView = findViewById(R.id.textView);
-
     }
 
     @Override
@@ -135,34 +129,6 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
             return true;
-        }
-    };
-    private View.OnClickListener butOnClickListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            sava();
-        }
-    };
-
-    void sava() {
-        RelativeLayout.LayoutParams layoutParams
-                = (RelativeLayout.LayoutParams) chessImg1[31].getLayoutParams();
-
-        int Left = layoutParams.leftMargin;
-        int Top = layoutParams.topMargin;
-        int Right = layoutParams.rightMargin;
-        int Bottom = layoutParams.bottomMargin;
-        chessposition = new int[]{Left, Top, Right, Bottom};
-    }
-
-    private View.OnClickListener butOnClickListener1 = new View.OnClickListener() {
-        public void onClick(View v) {
-            textView.setText("" + chessposition[0] + chessposition[1] + chessposition[2] + chessposition[3]);
-            chessImg1[31].layout(chessposition[0], chessposition[1], checkerboard[2], chessposition[3]);//Loooper 212 214dosomthing();
-            RelativeLayout.LayoutParams layoutParams
-                    = (RelativeLayout.LayoutParams) chessImg1[31].getLayoutParams();
-            layoutParams.setMargins(chessposition[0], chessposition[1], checkerboard[2], chessposition[3]);
-            chessImg1[31].setLayoutParams(layoutParams);
-
         }
     };
 }
