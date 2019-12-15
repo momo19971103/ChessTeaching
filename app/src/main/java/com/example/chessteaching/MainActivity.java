@@ -34,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
     ProgressDialogUtil progressDialogUtil;
     ImageView[] chessImg1 = new ImageView[32];
     ImageView checkerBoardImg;
-    final static int TraditionMode=1;
+    final static int TraditionMode = 1, LeisureMode = 2, ChessbackPicture = 14;
     int WorkAreaWidth, WorkAreaHeight;
-    int Mode=0;
+    int Mode = 0;
     int chessPictureNum = 0;
     //boolean firstTime = true;
     final int[] checkerboard = {
@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
     final int[] chess = {
             R.drawable.b1, R.drawable.b2, R.drawable.b3, R.drawable.b4, R.drawable.b5, R.drawable.b6,
             R.drawable.b7, R.drawable.r1, R.drawable.r2, R.drawable.r3, R.drawable.r4, R.drawable.r5,
-            R.drawable.r6, R.drawable.r7};
-
+            R.drawable.r6, R.drawable.r7, R.drawable.back1};
+    int[] LeisureLibrary = {0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 6, 6, 6, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 13, 13, 13};
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         WorkAreaWidth = intent.getIntExtra("Width", 0);
         WorkAreaHeight = intent.getIntExtra("Height", 0);
-        Mode = intent.getIntExtra("Mode",0);
+        Mode = intent.getIntExtra("Mode", 0);
 
         DisplayMetrics dm = new DisplayMetrics();//取得視窗屬性
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -124,15 +124,20 @@ public class MainActivity extends AppCompatActivity {
     void BuidChess(ReducePicture reducePicture) {
         //WorkAreaWidth = relativeLayout.getWidth();
         //WorkAreaHeight = relativeLayout.getHeight();
-        if(Mode==TraditionMode){
-        for (int chessNum = 0; chessNum < 14; chessNum++) {
-            if (chessNum == 0 || chessNum == 7)
-                BuildChessTime(1, chessNum, reducePicture);//帥將
-            else if (chessNum == 6 || chessNum == 13)
-                BuildChessTime(5, chessNum, reducePicture);//兵卒
-            else
-                BuildChessTime(2, chessNum, reducePicture);//其餘棋子
-        }}
+        if (Mode == TraditionMode) {
+            for (int chessNum = 0; chessNum < 14; chessNum++) {
+                if (chessNum == 0 || chessNum == 7)
+                    BuildChessTime(1, chessNum, reducePicture);//帥將
+                else if (chessNum == 6 || chessNum == 13)
+                    BuildChessTime(5, chessNum, reducePicture);//兵卒
+                else
+                    BuildChessTime(2, chessNum, reducePicture);//其餘棋子
+            }
+        } else if (Mode == LeisureMode) {
+
+            BuildChessTime(32, ChessbackPicture, reducePicture);
+
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -141,20 +146,31 @@ public class MainActivity extends AppCompatActivity {
         for (int i = NumberOfExecutions; i > 0; i--) {
 
             chessImg1[chessPictureNum] = new ImageView(getApplicationContext());
+            chessImg1[chessPictureNum].setId(chessPictureNum);
             Bitmap ConversionChessBitmap = reducePicture.ReturnObeyBitmap(this, chess[chessNum]);
             chessImg1[chessPictureNum].setImageBitmap(ConversionChessBitmap);
+
             int chessWidth = ConversionChessBitmap.getWidth();
             int chessHeight = ConversionChessBitmap.getHeight();
             RelativeLayout.LayoutParams layoutParams =
                     new RelativeLayout.LayoutParams(chessWidth, chessHeight);
-            double originPointX = WorkAreaWidth * 0.06;
-            double originPointY = ((WorkAreaHeight - WorkAreaWidth) * 0.5) + originPointX * 0.2;
+            double originPointX = 0;
+            double originPointY = 0;
+            if (Mode == TraditionMode) {
+                originPointX = WorkAreaWidth * 0.06;
+                originPointY = ((WorkAreaHeight - WorkAreaWidth) * 0.5) + originPointX * 0.2;
+                chessImg1[chessPictureNum].setOnTouchListener(imgListener);
+            } else if (Mode == LeisureMode) {
+                originPointX = WorkAreaWidth * 0.108;
+                originPointY = ((WorkAreaHeight - WorkAreaWidth) * 0.5) + originPointX * 0.6;
+                chessImg1[chessPictureNum].setLongClickable(true);
+                chessImg1[chessPictureNum].setOnLongClickListener(onLongClickListener);
+            }
             double Unit = WorkAreaWidth * 0.1;
             ChinasChessGameConfiguration CCGC
-                    = new ChinasChessGameConfiguration(originPointX, originPointY, Unit);
+                    = new ChinasChessGameConfiguration(originPointX, originPointY, Unit, Mode);
             layoutParams.leftMargin = CCGC.getChessPositionWidth(chessPictureNum);
             layoutParams.topMargin = CCGC.getChessPositionHeight(chessPictureNum);
-            chessImg1[chessPictureNum].setOnTouchListener(imgListener);
             relativeLayout.addView(chessImg1[chessPictureNum], layoutParams);
             chessPictureNum++;
 
@@ -201,6 +217,35 @@ public class MainActivity extends AppCompatActivity {
             progressDialogUtil.resectAlertDialog();
 
         }
+    }
+
+    private View.OnLongClickListener onLongClickListener = (new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            int randomGetNum = (int) (Math.random() * LeisureLibrary.length);
+            Bitmap ConversionChessBitmap =
+                    reducePicture.ReturnObeyBitmap(MainActivity.this,
+                            chess[LeisureLibrary[randomGetNum]]);
+            cutBackLibrary(randomGetNum);
+
+            int ID = v.getId();
+            chessImg1[ID].setImageBitmap(ConversionChessBitmap);
+            v.setLongClickable(false);
+            v.setOnTouchListener(imgListener);
+            return true;
+        }
+    });
+
+    private void cutBackLibrary(int randomGetNum) {
+        int moveNum = 0;
+        int[] test = new int[LeisureLibrary.length - 1];
+        for (int i = 0; i < LeisureLibrary.length - 1; i++) {
+            if (i == randomGetNum) {
+                moveNum = 1;
+            }
+            test[i] = LeisureLibrary[i + moveNum];
+        }
+        LeisureLibrary = test;
     }
 
     private View.OnTouchListener imgListener = new View.OnTouchListener() {

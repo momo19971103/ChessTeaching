@@ -30,13 +30,19 @@
             android:id="@+id/Traditionbtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="雙人中國象棋大盤" />
+            android:text="征戰沙場" />
 
         <Button
             android:id="@+id/Leisurebtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="雙人中國象棋小盤" />
+            android:text="突襲叢林" />
+
+        <Button
+            android:id="@+id/elsemodebtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="其他模式" />
 
         <Button
             android:id="@+id/reloadbtn"
