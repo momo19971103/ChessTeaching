@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView[] chessImg1 = new ImageView[32];
     ImageView checkerBoardImg;
     TextView textView;
-    int WorkAreaWidth,WorkAreaHeight;
+    int WorkAreaWidth, WorkAreaHeight;
     int[] chessposition;
     int chessPictureNum = 0;
     final int[] checkerboard = {
@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.textView);
 
     }
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         // TODO Auto-generated method stub/
@@ -93,11 +94,13 @@ public class MainActivity extends AppCompatActivity {
             int chessHeight = ConversionChessBitmap.getHeight();
             RelativeLayout.LayoutParams layoutParams =
                     new RelativeLayout.LayoutParams(chessWidth, chessHeight);
-            double originPointX =WorkAreaWidth * 0.05;
-
-            double originPointY =   ((WorkAreaHeight - WorkAreaWidth) * 0.5 );
-            layoutParams.leftMargin = (int) originPointX;
-            layoutParams.topMargin = (int) originPointY;
+            double originPointX = WorkAreaWidth * 0.06;
+            double originPointY = ((WorkAreaHeight - WorkAreaWidth) * 0.5)+originPointX*0.2;
+            double Unit = WorkAreaWidth * 0.1;
+            ChinasChessGameConfiguration CCGC
+                    = new ChinasChessGameConfiguration(originPointX,originPointY,Unit);
+            layoutParams.leftMargin = CCGC.getChessPositionWidth(chessPictureNum);
+            layoutParams.topMargin = CCGC.getChessPositionHeight(chessPictureNum);
             chessImg1[chessPictureNum].setOnTouchListener(imgListener);
             relativeLayout.addView(chessImg1[chessPictureNum], layoutParams);
             chessPictureNum++;
