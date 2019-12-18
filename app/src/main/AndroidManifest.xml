@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.chessteaching">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.free.chessteaching">
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="自由的象棋"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".MainHomeActivity">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name="com.free.chessteaching.MainActivity"></activity>
+        <activity android:name="com.free.chessteaching.MainHomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
