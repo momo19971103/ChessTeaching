@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else if (Mode == LeisureMode) {
 
-            BuildChessTime(32, ChessbackPicture, reducePicture);
+            BuildChessTime(32, ChessbackPicture, reducePicture);//test
 
         }
     }
