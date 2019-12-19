@@ -7,8 +7,8 @@ android {
         applicationId "com.free.chessteaching"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 3
-        versionName "1.25"
+        versionCode 4
+        versionName "1.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
